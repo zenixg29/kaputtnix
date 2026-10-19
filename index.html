@@ -1,0 +1,734 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>KaputtNix</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="KaputtNix: Stell deine kaputten Sachen ein, Hobby-Techniker aus deiner Nähe machen dir ein Angebot.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700&display=swap">
+<style>
+/* Layout: helle, app-artige Marktplatz-Seite; Hero mit Live-Vorschau einer Preisverhandlung, darunter Inserate-Raster */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --surface-2:#eef1f6; --ink:#121826; --muted:#5a6476; --line:#e1e5ec;
+  --accent:#2350d8; --accent-hover:#1a40b3; --accent-ink:#ffffff; --accent-soft:#e7edfd;
+  --price:#ffd84d; --price-ink:#3a2c00;
+  --t1:#e7edfd; --t2:#fff3c4; --t3:#e3f4ec;
+  --ok:#0f7d58; --ok-soft:#dcf3e9; --bad:#c3372c; --bad-soft:#fbe3e0;
+  --shadow:0 1px 2px rgba(18,24,38,.05),0 8px 24px rgba(18,24,38,.08);
+  --f-display:"Sora",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f131b; --surface:#171c26; --surface-2:#1f2533; --ink:#e9edf5; --muted:#9aa4b6; --line:#2a3242;
+  --accent:#6f8fff; --accent-hover:#8ea7ff; --accent-ink:#0b1430; --accent-soft:#1e2a4d;
+  --price:#f5cd3f; --price-ink:#2b2000;
+  --t1:#1e2a4d; --t2:#3a3218; --t3:#173327;
+  --ok:#5fd3a4; --ok-soft:#153429; --bad:#ff8c80; --bad-soft:#3f1f1c;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f131b; --surface:#171c26; --surface-2:#1f2533; --ink:#e9edf5; --muted:#9aa4b6; --line:#2a3242;
+  --accent:#6f8fff; --accent-hover:#8ea7ff; --accent-ink:#0b1430; --accent-soft:#1e2a4d;
+  --price:#f5cd3f; --price-ink:#2b2000;
+  --t1:#1e2a4d; --t2:#3a3218; --t3:#173327;
+  --ok:#5fd3a4; --ok-soft:#153429; --bad:#ff8c80; --bad-soft:#3f1f1c;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35); color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.15;letter-spacing:-.02em}
+a{color:var(--accent)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* Kopfzeile */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.topbar{display:flex;align-items:center;gap:12px 20px;flex-wrap:wrap;padding-block:12px}
+.logo{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);font-family:var(--f-display);font-weight:700;font-size:21px;letter-spacing:-.03em}
+.logo i{width:30px;height:30px;border-radius:9px;background:var(--accent);display:grid;place-items:center;flex:none}
+.logo i::after{content:"";width:12px;height:7px;border-left:3px solid var(--accent-ink);border-bottom:3px solid var(--accent-ink);transform:translateY(-2px) rotate(-45deg)}
+nav.main{display:flex;gap:4px;flex-wrap:wrap}
+nav.main a{text-decoration:none;color:var(--muted);font-weight:700;padding:8px 14px;border-radius:999px;display:inline-flex;align-items:center;gap:6px}
+nav.main a:hover{color:var(--ink);background:var(--surface-2)}
+nav.main a[aria-current="page"]{color:var(--accent);background:var(--accent-soft)}
+.badge{background:var(--bad);color:#fff;font-size:11px;font-weight:800;border-radius:99px;min-width:18px;height:18px;padding:0 5px;display:inline-grid;place-items:center}
+.top-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.theme-btn{display:inline-flex;align-items:center;gap:6px;min-height:40px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;font-weight:700;font-size:14px;cursor:pointer;color:var(--ink)}
+.theme-btn:hover{background:var(--surface-2)}
+.theme-btn .ico{font-size:16px;line-height:1}
+.who span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.who{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.who select{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 12px;font-weight:700;color:var(--ink);max-width:210px;font-size:14px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;border:1px solid transparent;border-radius:999px;padding:9px 20px;font-weight:800;cursor:pointer;text-decoration:none;white-space:nowrap;background:var(--surface-2);color:var(--ink)}
+.btn .arr{transition:transform .2s}
+.btn:hover .arr{transform:translateX(3px)}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{background:var(--accent-hover)}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.danger{background:transparent;border-color:var(--line);color:var(--bad)}
+.btn.ok{background:var(--ok);color:var(--surface)}
+.btn.small{min-height:38px;padding:6px 14px;font-size:14px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+.note{background:var(--accent-soft);color:var(--accent);font-size:13px;font-weight:600;padding-block:6px;text-align:center}
+
+main{padding-block:32px 72px;min-height:60vh}
+
+/* Startseite */
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:40px;align-items:center;padding-block:8px 44px}
+.hero .kicker{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:5px 12px;margin-bottom:16px}
+.hero .kicker::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.hero h1{font-size:clamp(32px,5vw,56px);font-weight:700;letter-spacing:-.035em}
+.hero p.lead{color:var(--muted);font-size:18px;max-width:46ch;margin:16px 0 24px}
+.quick{display:flex;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px;max-width:540px;box-shadow:var(--shadow)}
+.quick input{flex:1 1 auto;min-width:0;border:0;background:transparent;padding:10px 14px;font-size:16px;outline-offset:-2px;border-radius:999px}
+.quick label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.facts{margin-top:18px;font-size:14px;color:var(--muted);display:flex;gap:6px 18px;flex-wrap:wrap}
+.facts b{color:var(--ink);font-variant-numeric:tabular-nums}
+
+.preview{display:grid;gap:10px;justify-items:stretch}
+.preview .cap{font-size:13px;font-weight:700;color:var(--muted)}
+.pv{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow);display:grid;gap:12px;text-decoration:none;color:inherit}
+.pv-item{display:flex;justify-content:space-between;gap:12px;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.pv-item b{display:block;font-family:var(--f-display);font-size:17px}
+.pv-item small{color:var(--muted)}
+.bubble{padding:9px 13px;border-radius:14px;background:var(--surface-2);font-size:14px;max-width:88%}
+.bubble.r{justify-self:end;background:var(--accent-soft)}
+.bubble b{font-weight:800}
+.pv .actions{justify-content:flex-start}
+.pv .fake{pointer-events:none}
+
+.cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.chip{display:inline-flex;align-items:center;min-height:40px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 16px;font-size:14px;font-weight:700;cursor:pointer;color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.listhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.listhead h2{font-size:26px;font-weight:700}
+.listhead select{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 12px}
+.muted{color:var(--muted)}
+.searchrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.searchrow input{flex:1 1 240px;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:11px 18px;font-size:16px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.thumb{position:relative;aspect-ratio:4/3;max-width:100%;overflow:hidden;background:var(--t1)}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb.c2{background:var(--t2)} .thumb.c3{background:var(--t3)}
+.ph{position:absolute;inset:0;padding:16px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px}
+.ph-dev{font-family:var(--f-display);font-weight:700;font-size:clamp(18px,2vw,24px);line-height:1.1;letter-spacing:-.02em;overflow-wrap:anywhere}
+.ph-err{font-size:14px;color:var(--muted);font-weight:600}
+.ph-note{position:absolute;top:12px;right:12px;font-size:12px;color:var(--muted);font-weight:700;background:var(--surface);border-radius:999px;padding:2px 9px;opacity:.85}
+.card .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.card h3{font-family:var(--f-body);font-size:16px;font-weight:800;line-height:1.3;letter-spacing:0}
+.card .meta{font-size:13px;color:var(--muted);margin-top:auto;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+
+/* Status-Plakette */
+.stamp{position:absolute;top:12px;left:12px;background:var(--ok);color:var(--surface);font-weight:800;font-size:12px;padding:4px 10px;border-radius:999px}
+.stamp::before{content:"✓ "}
+.stamp.deal{background:var(--accent);color:var(--accent-ink)}
+.stamp.deal::before{content:""}
+.stamp.big{font-size:15px;padding:6px 14px;top:16px;left:16px}
+.stamp.fresh{animation:pop .5s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* Preis */
+.tag{white-space:nowrap;flex:none;display:inline-flex;align-items:center;align-self:flex-start;background:var(--price);color:var(--price-ink);font-weight:800;font-size:15px;padding:3px 11px;border-radius:999px;font-variant-numeric:tabular-nums}
+.tag.big{font-size:26px;padding:6px 18px;font-family:var(--f-display)}
+.offers-pill{font-size:13px;font-weight:700;color:var(--muted)}
+.offers-pill.has{color:var(--accent)}
+
+.empty{border:1.5px dashed var(--line);border-radius:16px;padding:36px 20px;text-align:center;color:var(--muted);background:var(--surface)}
+
+/* Detailseite */
+.back{display:inline-flex;gap:6px;align-items:center;color:var(--muted);text-decoration:none;font-weight:700;margin-bottom:14px;min-height:44px}
+.detail{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:28px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px}
+.detail .thumb{border-radius:18px;aspect-ratio:16/9}
+.detail .ph{padding:24px}
+.detail .ph-dev{font-size:clamp(30px,4.5vw,48px)}
+.detail .ph-err{font-size:16px}
+.detail h1{font-size:clamp(26px,3.4vw,36px);font-weight:700;margin:20px 0 8px}
+.zettel{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0}
+.zettel div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.zettel small{display:block;font-size:12px;color:var(--muted);font-weight:600}
+.zettel span{font-weight:700}
+.desc{white-space:pre-wrap;max-width:65ch;margin:0}
+.side{display:grid;gap:14px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 96px)}
+.pricebox small{display:block;font-size:13px;color:var(--muted);font-weight:700;margin-bottom:10px}
+.person{display:flex;gap:12px;align-items:center}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:800;font-family:var(--f-display);flex:none}
+.person b{display:block}
+.person > div > span{font-size:13px;color:var(--muted)}
+.stars,.person .stars{color:#f5a300;letter-spacing:1px;font-size:14px}
+.stars .off,.person .stars .off{color:var(--line)}
+
+h2.sec{font-size:22px;font-weight:700;margin:32px 0 12px}
+.offer{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:12px}
+.offer + .offer{margin-top:12px}
+.offer.turnme{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.offer-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.state{font-size:12px;font-weight:800;border-radius:99px;padding:4px 11px;white-space:nowrap}
+.state.turn{background:var(--bad-soft);color:var(--bad)}
+.state.wait{background:var(--surface-2);color:var(--muted)}
+.state.ok{background:var(--ok-soft);color:var(--ok)}
+.state.no{background:var(--surface-2);color:var(--muted);text-decoration:line-through}
+.ladder{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px;font-weight:700;color:var(--muted)}
+.ladder span{padding:2px 10px;border-radius:999px;border:1px solid var(--line)}
+.ladder span.o{background:var(--surface-2)}
+.ladder span.now{background:var(--price);color:var(--price-ink);border-color:transparent}
+.chat{display:grid;gap:8px;max-height:320px;overflow:auto;padding:4px 2px}
+.msg{max-width:85%;padding:9px 13px;border-radius:14px;background:var(--surface-2);font-size:15px}
+.msg.me{justify-self:end;background:var(--accent-soft)}
+.msg .who-t{font-size:12px;color:var(--muted);font-weight:700;display:block;margin-bottom:2px}
+.msg .p{font-weight:800}
+.msg.sys{justify-self:center;background:transparent;color:var(--muted);font-size:13px;text-align:center}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.inline-form{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.inline-form input{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:9px 14px;min-width:0;min-height:44px;font-size:16px}
+.inline-form input.euro{width:120px}
+.inline-form input.txt{flex:1 1 180px}
+.hint{background:var(--accent-soft);border-radius:14px;padding:14px 16px;font-size:15px}
+
+/* Formulare */
+.form{display:grid;gap:16px;max-width:680px}
+.field{display:grid;gap:6px}
+.field label,.field .lbl{font-weight:800;font-size:15px}
+.req{color:var(--bad)}
+.field .sub{font-size:13px;color:var(--muted);font-weight:500}
+.field input[type=text],.field input[type=number],.field select,.field textarea{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:11px 14px;font-size:16px;width:100%}
+.field textarea{min-height:120px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.check{display:flex;gap:8px;align-items:center;font-weight:700;min-height:44px}
+.check input{width:20px;height:20px}
+.drop{border:1.5px dashed var(--line);border-radius:14px;padding:22px;text-align:center;color:var(--muted);cursor:pointer;background:var(--surface);font-weight:600}
+.drop img{max-height:180px;border-radius:10px;margin:0 auto}
+.pagehead{margin-bottom:22px}
+.pagehead h1{font-size:clamp(28px,4vw,40px);font-weight:700}
+.pagehead p{color:var(--muted);margin:8px 0 0}
+
+.tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.rows{display:grid;gap:10px}
+.rowitem{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px;text-decoration:none;color:inherit}
+.rowitem .thumb{border-radius:10px;aspect-ratio:1}
+.rowitem .ph{padding:8px}
+.rowitem .ph-dev{font-size:12px}
+.rowitem .ph-err,.rowitem .ph-note,.rowitem .stamp{display:none}
+.rowitem b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rowitem small{color:var(--muted)}
+
+.techs{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.skills{display:flex;gap:6px;flex-wrap:wrap}
+.skills span{font-size:13px;background:var(--surface-2);border-radius:999px;padding:3px 10px;font-weight:700}
+
+.bottombar{display:none}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:11px 20px;border-radius:999px;font-weight:700;z-index:50;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
+
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;background:var(--surface)}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:18px}
+footer button{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0;min-height:32px}
+
+@media (max-width:900px){
+  .hero,.detail{grid-template-columns:1fr}
+  .side{position:static}
+}
+@media (max-width:640px){
+  .row2{grid-template-columns:1fr}
+  nav.main,.top-right .btn,.who span{display:none}
+  .topbar{flex-wrap:nowrap}
+  .top-right{margin-left:auto;flex-wrap:nowrap;min-width:0}
+  .who select{max-width:150px}
+  .theme-btn .lbl{display:none}
+  .theme-btn{padding:6px 11px}
+  header.top{position:static}
+  main{padding-block:22px calc(96px + env(safe-area-inset-bottom,0px))}
+  .quick{border-radius:16px;flex-wrap:wrap}
+  .quick .btn{width:100%}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .card .body{padding:10px 12px 12px}
+  .card h3{font-size:15px}
+  .ph{padding:10px}
+  .ph-dev{font-size:17px}
+  .ph-err{font-size:13px}
+  .ph-note{display:none}
+  .rowitem{grid-template-columns:56px minmax(0,1fr)}
+  .rowitem > :last-child{grid-column:2;justify-self:start}
+  .bottombar{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--surface);border-top:1px solid var(--line);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+  .bottombar a{display:grid;place-items:center;text-decoration:none;color:var(--muted);font-size:13px;font-weight:800;min-height:48px;border-radius:999px;position:relative;text-align:center;line-height:1.15}
+  .bottombar a[aria-current="page"]{color:var(--accent);background:var(--accent-soft)}
+  .bottombar a.sell{background:var(--accent);color:var(--accent-ink)}
+  .bottombar .badge{position:absolute;top:0;right:2px}
+  .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head><body>
+
+<header class="top">
+  <div class="wrap topbar">
+    <a class="logo" href="#start" aria-label="KaputtNix Startseite"><i aria-hidden="true"></i>KaputtNix</a>
+    <nav class="main" id="nav" aria-label="Hauptmenü"></nav>
+    <div class="top-right">
+      <button class="theme-btn" type="button" id="themeBtn" aria-label="Dunkelmodus einschalten"><span class="ico" aria-hidden="true">☾</span><span class="lbl">Dunkel</span></button>
+      <label class="who" for="userSel"><span>Angemeldet als</span>
+        <select id="userSel"></select>
+      </label>
+      <a class="btn primary" href="#neu">Kaputtes einstellen <span class="arr" aria-hidden="true">→</span></a>
+    </div>
+  </div>
+  <div class="note"><div class="wrap">Prototyp: Alle Personen und Inserate sind Beispiele. Was du hier machst, bleibt nur in deinem Browser.</div></div>
+</header>
+
+<main class="wrap" id="app"></main>
+
+<nav class="bottombar" id="bottombar" aria-label="Menü unten"></nav>
+
+<footer><div class="wrap">
+  <span>KaputtNix · Reparieren statt wegwerfen · Ein Schulprojekt</span>
+  <button type="button" data-act="reset">Beispieldaten zurücksetzen</button>
+</div></footer>
+
+<script>
+(function(){
+document.documentElement.lang='de';
+/* Hell/Dunkel-Umschalter: merkt sich die Wahl im Browser, sonst gilt die Systemeinstellung */
+const TKEY='kaputtnix-theme';
+const sysDark=()=>window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches;
+function curTheme(){const t=document.documentElement.dataset.theme; return t||(sysDark()?'dark':'light');}
+function paintThemeBtn(){const b=document.getElementById('themeBtn'); if(!b) return; const dark=curTheme()==='dark'; b.querySelector('.ico').textContent=dark?'☀':'☾'; b.querySelector('.lbl').textContent=dark?'Hell':'Dunkel'; b.setAttribute('aria-label',dark?'Hellen Modus einschalten':'Dunkelmodus einschalten');}
+try{const t=localStorage.getItem(TKEY); if(t==='dark'||t==='light') document.documentElement.dataset.theme=t;}catch(e){}
+document.getElementById('themeBtn').addEventListener('click',()=>{const n=curTheme()==='dark'?'light':'dark'; document.documentElement.dataset.theme=n; try{localStorage.setItem(TKEY,n);}catch(e){} paintThemeBtn();});
+if(window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change',paintThemeBtn);
+paintThemeBtn();
+const CATS=[
+ {id:'handy',name:'Handy & Tablet'},{id:'computer',name:'Computer & Laptop'},{id:'konsole',name:'Konsole & Gaming'},
+ {id:'fahrrad',name:'Fahrrad'},{id:'haushalt',name:'Haushalt & Küche'},{id:'audio',name:'Audio & Kopfhörer'},{id:'sonstiges',name:'Sonstiges'}
+];
+const DAUER=['Heute noch','1–2 Tage','3–5 Tage','Etwa eine Woche','Mehr als eine Woche'];
+const KEY='kaputtnix-schorndorf-v1';
+const H=3600e3;
+
+function seed(){
+  const now=Date.now();
+  const users=[
+    {id:'u1',name:'Lena Hoffmann',ort:'73614 Schorndorf-Innenstadt',tech:false,skills:'',ratings:[]},
+    {id:'u2',name:'Jonas Weber',ort:'73614 Schorndorf-Weiler',tech:true,skills:'Handys, Konsolen, Löten',ratings:[5,5,4,5]},
+    {id:'u3',name:'Aylin Demir',ort:'73614 Schorndorf-Haubersbronn',tech:true,skills:'Fahrräder, Haushaltsgeräte',ratings:[5,4,5]},
+    {id:'u4',name:'Peter Becker',ort:'73614 Schorndorf-Schornbach',tech:false,skills:'',ratings:[]},
+    {id:'u5',name:'Can Yılmaz',ort:'73650 Winterbach',tech:true,skills:'Laptops, Handys, Akkutausch',ratings:[4,5]},
+    {id:'u6',name:'Sophie Krüger',ort:'73614 Schorndorf-Miedelsbach',tech:false,skills:'',ratings:[]}
+  ];
+  const L=(id,owner,title,cat,desc,budget,h,extra)=>Object.assign({id,owner,title,cat,desc,budget,vb:true,ort:users.find(u=>u.id===owner).ort,created:now-h*H,status:'offen',img:null},extra||{});
+  const listings=[
+    L('l1','u1','iPhone 12: Display gesprungen','handy','Ist mir runtergefallen. Das Glas hat oben rechts einen großen Sprung, Touch geht aber noch. Face ID funktioniert.\nIch hätte gern ein neues Display, gern auch ein gutes Nachbau-Teil.',60,5),
+    L('l2','u4','Nintendo Switch: Joy-Con driftet','konsole','Der linke Joy-Con läuft von allein nach oben, auch wenn ich ihn nicht berühre. Der rechte ist okay.',25,30,{status:'vergeben',finalPrice:20}),
+    L('l3','u6','Fahrrad: Gangschaltung springt','fahrrad','Shimano 7-Gang. Ab dem 4. Gang springt die Kette immer wieder raus und es klackert. Bremsen sind okay.',30,8),
+    L('l4','u4','Kaffeemaschine: pumpt kein Wasser','haushalt','De\'Longhi Magnifica. Er brummt, aber es kommt kein Wasser. Entkalkt habe ich schon. Kann ihn auch vorbeibringen.',40,2),
+    L('l5','u6','Laptop: lädt nicht mehr','computer','Lenovo IdeaPad, 3 Jahre alt. Die Ladelampe geht nicht an, auch mit einem anderen Netzteil nicht. Vielleicht die Ladebuchse?',50,20),
+    L('l6','u1','Kopfhörer: links kein Ton','audio','Sony Kabel-Kopfhörer, links kommt nur noch manchmal Ton, wenn man am Kabel wackelt.',15,120,{status:'repariert',finalPrice:15,review:{stars:5,text:'Super schnell gelötet, klingt wie neu. Danke Jonas!'}}),
+    L('l7','u1','Stehlampe: flackert','sonstiges','Alte Stehlampe vom Flohmarkt. Neue Birne hilft nicht, sie flackert trotzdem. Vielleicht der Schalter.',10,50)
+  ];
+  const M=(by,kind,h,text,price)=>({by,kind,t:now-h*H,text:text||'',price});
+  const offers=[
+    {id:'o1',listing:'l1',tech:'u2',dauer:'1–2 Tage',status:'offen',msgs:[
+      M('u2','preis',4.5,'Hi Lena, ich hab schon viele iPhone-Displays getauscht. Mit Original-Qualität wäre ich bei 75 €.',75),
+      M('u1','preis',3.8,'Mein Budget ist eher 60 €. Geht das?',60),
+      M('u2','preis',3,'Mit einem guten Nachbau-Display kann ich 65 € machen, inkl. neuer Klebedichtung.',65)]},
+    {id:'o2',listing:'l1',tech:'u5',dauer:'3–5 Tage',status:'offen',msgs:[
+      M('u5','preis',2,'Ich kann es für 70 € machen, du müsstest es aber zu mir nach Winterbach bringen.',70)]},
+    {id:'o3',listing:'l2',tech:'u2',dauer:'Heute noch',status:'angenommen',msgs:[
+      M('u2','preis',28,'Joystick-Modul tauschen, 20 € inklusive Ersatzteil.',20),
+      M('u4','annahme',27,'')]},
+    {id:'o4',listing:'l3',tech:'u3',dauer:'1–2 Tage',status:'offen',msgs:[
+      M('u3','preis',6,'Klingt nach verbogenem Schaltauge, oder der Seilzug muss nur nachgestellt werden. 30 € passt, Teile kämen extra falls nötig.',30)]},
+    {id:'o5',listing:'l5',tech:'u5',dauer:'3–5 Tage',status:'offen',msgs:[
+      M('u5','preis',18,'Ladebuchse tauschen kostet bei dem Modell meistens um die 55 €.',55),
+      M('u6','preis',16,'Würdest du 45 € machen?',45)]},
+    {id:'o6',listing:'l6',tech:'u2',dauer:'Heute noch',status:'angenommen',msgs:[
+      M('u2','preis',118,'Das ist bestimmt ein Kabelbruch am Stecker. 15 € passt.',15),
+      M('u1','annahme',117,'')]}
+  ];
+  return {users,listings,offers,me:'u1',seq:100};
+}
+
+let db, memOnly=false;
+function load(){
+  try{const s=localStorage.getItem(KEY); if(s){db=JSON.parse(s); return;}}catch(e){}
+  db=seed();
+}
+function save(){
+  if(memOnly) return;
+  try{localStorage.setItem(KEY,JSON.stringify(db));}
+  catch(e){toast('Speicher im Browser ist voll. Änderungen gelten nur bis zum Neuladen.'); memOnly=true;}
+}
+load();
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const user=id=>db.users.find(u=>u.id===id)||{name:'Unbekannt',ort:'',ratings:[]};
+const me=()=>user(db.me);
+const listing=id=>db.listings.find(l=>l.id===id);
+const cat=id=>CATS.find(c=>c.id===id)||CATS[CATS.length-1];
+const nid=p=>p+(++db.seq);
+const euro=n=>Number(n).toLocaleString('de-DE',{maximumFractionDigits:2})+' €';
+const initials=n=>n.split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase();
+const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
+const short=o=>o.replace(/^\d+\s*/,'');
+function ago(t){const m=Math.round((Date.now()-t)/60000); if(m<1)return'gerade eben'; if(m<60)return'vor '+m+' Min.'; const h=Math.round(m/60); if(h<24)return'vor '+h+' Std.'; const d=Math.round(h/24); return d===1?'gestern':'vor '+d+' Tagen';}
+function stars(v,count){const r=Math.round(v); let s='<span class="stars" aria-label="'+v.toFixed(1)+' von 5 Sternen">'; for(let i=1;i<=5;i++) s+=i<=r?'★':'<span class="off">★</span>'; return s+'</span>'+(count!=null?' <span class="muted">('+count+')</span>':'');}
+function split(title){const i=title.indexOf(':'); return i>0?[title.slice(0,i).trim(),title.slice(i+1).trim()]:[title,''];}
+const tint=c=>['','c2','c3'][CATS.findIndex(x=>x.id===c)%3];
+function thumb(l,opts){
+  const [dev,err]=split(l.title);
+  const st=l.status==='repariert'?'<span class="stamp'+(opts&&opts.big?' big':'')+(ui.fresh===l.id?' fresh':'')+'">Repariert</span>':l.status==='vergeben'?'<span class="stamp deal'+(opts&&opts.big?' big':'')+'">Vergeben</span>':'';
+  if(l.img) return '<div class="thumb"><img src="'+l.img+'" alt="Foto: '+esc(l.title)+'">'+st+'</div>';
+  return '<div class="thumb '+tint(l.cat)+'"><div class="ph">'+(st?'':'<span class="ph-note">Noch kein Foto</span>')+'<span class="ph-dev">'+esc(dev)+'</span>'+(err?'<span class="ph-err">'+esc(err)+'</span>':'')+'</div>'+st+'</div>';
+}
+const priceTag=(l,big)=>'<span class="tag'+(big?' big':'')+'">'+euro(l.budget)+(l.vb?' VB':'')+'</span>';
+const offersOf=lid=>db.offers.filter(o=>o.listing===lid);
+function lastPrice(o){for(let i=o.msgs.length-1;i>=0;i--) if(o.msgs[i].kind==='preis') return o.msgs[i]; return null;}
+function turnOf(o){ if(o.status!=='offen') return null; const lp=lastPrice(o); const owner=listing(o.listing).owner; return lp.by===o.tech?owner:o.tech; }
+const myTurnCount=()=>db.offers.filter(o=>turnOf(o)===db.me).length;
+
+let ui={q:'',cat:'',sort:'neu',tab:'inserate',newImg:null,rate:{},fresh:null,prefill:''};
+let toastTimer;
+function toast(t){let el=$('.toast'); if(!el){el=document.createElement('div'); el.className='toast'; el.setAttribute('role','status'); document.body.appendChild(el);} el.textContent=t; el.hidden=false; clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.hidden=true,2600);}
+
+function route(){const h=(location.hash||'').slice(1); if(h.startsWith('inserat-')) return {v:'detail',id:h.slice(8)}; if(['neu','meins','techniker','profil'].includes(h)) return {v:h}; return {v:'start'};}
+function go(h){ if(location.hash==='#'+h) render(); else location.hash=h; }
+
+function renderChrome(r){
+  const c=myTurnCount();
+  const b=c?' <span class="badge" aria-label="'+c+' Antworten offen">'+c+'</span>':'';
+  const links=[['start','Entdecken'],['techniker','Techniker'],['meins','Meine Sachen']];
+  $('#nav').innerHTML=links.map(([h,t])=>'<a href="#'+h+'"'+(r.v===h?' aria-current="page"':'')+'>'+t+(h==='meins'?b:'')+'</a>').join('');
+  const bb=[['start','Entdecken'],['techniker','Techniker'],['neu','+ Einstellen'],['meins','Meine Sachen']];
+  $('#bottombar').innerHTML=bb.map(([h,t])=>'<a href="#'+h+'"'+(h==='neu'?' class="sell"':'')+(r.v===h?' aria-current="page"':'')+'>'+t+(h==='meins'&&c?'<span class="badge">'+c+'</span>':'')+'</a>').join('');
+  $('#userSel').innerHTML=db.users.map(u=>'<option value="'+u.id+'"'+(u.id===db.me?' selected':'')+'>'+esc(u.name)+(u.tech?' (Techniker)':'')+'</option>').join('')+'<option value="__new">+ Neues Profil anlegen</option>';
+}
+
+function viewStart(){
+  const open=db.listings.filter(l=>l.status==='offen');
+  const techs=db.users.filter(u=>u.tech);
+  const fixed=db.listings.filter(l=>l.status==='repariert').length;
+  const dOffer=db.offers.filter(o=>o.status==='offen'&&o.msgs.filter(m=>m.kind==='preis').length>1)[0];
+  const demo=dOffer?{l:listing(dOffer.listing),ps:dOffer.msgs.filter(m=>m.kind==='preis').slice(-3)}:null;
+  let items=db.listings.slice();
+  if(ui.cat) items=items.filter(l=>l.cat===ui.cat);
+  if(ui.q){const q=ui.q.toLowerCase(); items=items.filter(l=>(l.title+' '+l.desc+' '+l.ort).toLowerCase().includes(q));}
+  const rank=l=>l.status==='offen'?0:1;
+  items.sort((a,b)=>rank(a)-rank(b)|| (ui.sort==='preis-auf'?a.budget-b.budget: ui.sort==='preis-ab'?b.budget-a.budget: b.created-a.created));
+  return `
+  <section class="hero">
+    <div>
+      <span class="kicker">${techs.length} Techniker in und um Schorndorf</span>
+      <h1>Kaputt? Hier repariert’s jemand aus Schorndorf.</h1>
+      <p class="lead">Stell deine kaputten Sachen ein. Hobby-Techniker aus der Nähe machen dir ein Angebot, und ihr handelt den Preis aus.</p>
+      <form class="quick" data-form="quick">
+        <label for="quickIn">Was ist bei dir kaputt?</label>
+        <input id="quickIn" type="text" placeholder="Was ist kaputt? z. B. Fahrrad">
+        <button class="btn primary" type="submit">Einstellen <span class="arr" aria-hidden="true">→</span></button>
+      </form>
+      <div class="facts"><span><b>${open.length}</b> Sachen warten auf Reparatur</span><span><b>${fixed}</b> schon repariert</span><span>Kostenlos einstellen</span></div>
+    </div>
+    ${demo?`<div class="preview">
+      <span class="cap">So läuft’s: Ihr handelt den Preis aus</span>
+      <a class="pv" href="#inserat-${demo.l.id}">
+        <div class="pv-item"><div><b>${esc(demo.l.title)}</b><small>${esc(short(demo.l.ort))}</small></div>${priceTag(demo.l)}</div>
+        ${demo.ps.map(m=>`<div class="bubble${m.by===demo.l.owner?' r':''}"><b>${esc(user(m.by).name.split(' ')[0])}:</b> ${euro(m.price)}${m.text?' · '+esc(m.text.length>60?m.text.slice(0,58)+'…':m.text):''}</div>`).join('')}
+        <div class="actions fake"><span class="btn ok small">${euro(demo.ps[demo.ps.length-1].price)} annehmen</span><span class="btn small">Gegenangebot</span></div>
+      </a>
+    </div>`:''}
+  </section>
+  <form class="searchrow" data-form="search" role="search">
+    <input id="q" type="search" placeholder="Inserate durchsuchen, z. B. Display, Fahrrad, Kaffeemaschine" value="${esc(ui.q)}" aria-label="Inserate durchsuchen">
+    <button class="btn" type="submit">Suchen</button>
+  </form>
+  <div class="cats" role="group" aria-label="Kategorien">
+    <button class="chip" type="button" data-act="cat" data-id="" aria-pressed="${!ui.cat}">Alle</button>
+    ${CATS.map(c=>`<button class="chip" type="button" data-act="cat" data-id="${c.id}" aria-pressed="${ui.cat===c.id}">${c.name}</button>`).join('')}
+  </div>
+  <div class="listhead">
+    <h2>${ui.cat?esc(cat(ui.cat).name):'Alle Inserate'} <span class="muted" style="font-size:15px;font-family:var(--f-body);font-weight:500;font-stretch:100%">${items.length} Ergebnisse</span></h2>
+    <select id="sort" aria-label="Sortieren">
+      <option value="neu"${ui.sort==='neu'?' selected':''}>Neueste zuerst</option>
+      <option value="preis-auf"${ui.sort==='preis-auf'?' selected':''}>Preis aufsteigend</option>
+      <option value="preis-ab"${ui.sort==='preis-ab'?' selected':''}>Preis absteigend</option>
+    </select>
+  </div>
+  ${items.length?'<div class="grid">'+items.map(cardHtml).join('')+'</div>':'<div class="empty">Keine Inserate gefunden. Probier eine andere Suche oder <a href="#neu">stell selbst etwas ein</a>.</div>'}`;
+}
+function cardHtml(l){
+  const n=offersOf(l.id).filter(o=>o.status!=='abgelehnt').length;
+  return `<a class="card" href="#inserat-${l.id}">
+    ${thumb(l)}
+    <div class="body">
+      ${priceTag(l)}
+      <h3>${esc(l.title)}</h3>
+      <div class="meta"><span>${esc(short(l.ort))}</span><span>${ago(l.created)}</span></div>
+      ${l.status==='offen'?`<span class="offers-pill${n?' has':''}">${n?n+(n===1?' Angebot':' Angebote'):'Noch keine Angebote'}</span>`:''}
+    </div></a>`;
+}
+
+function viewDetail(id){
+  const l=listing(id);
+  if(!l) return '<div class="empty">Dieses Inserat gibt es nicht mehr. <a href="#start">Zur Startseite</a></div>';
+  const owner=user(l.owner), isOwner=l.owner===db.me, m=me();
+  const offers=offersOf(l.id);
+  let side='';
+  side+=`<div class="panel pricebox"><small>Preisvorstellung</small>${priceTag(l,true)}<p class="muted" style="margin:12px 0 0;font-size:14px">${l.vb?'VB heißt Verhandlungsbasis: Techniker dürfen einen anderen Preis vorschlagen.':'Festpreis.'}</p></div>`;
+  side+=`<div class="panel"><div class="person"><div class="avatar">${initials(owner.name)}</div><div><b>${esc(owner.name)}${isOwner?' (du)':''}</b><span>${esc(owner.ort)}</span></div></div></div>`;
+  if(isOwner && l.status==='offen') side+=`<button class="btn danger" type="button" data-act="del" data-id="${l.id}">Inserat löschen</button>`;
+  if(isOwner && l.status==='offen' && ui.confirmDel===l.id) side+=`<div class="hint">Wirklich löschen? Alle Angebote gehen verloren. <div class="actions" style="margin-top:8px"><button class="btn small danger" type="button" data-act="del-yes" data-id="${l.id}">Ja, löschen</button><button class="btn small ghost" type="button" data-act="del-no">Abbrechen</button></div></div>`;
+
+  let main='';
+  if(l.status==='repariert' && l.review){
+    const acc=offers.find(o=>o.status==='angenommen');
+    main+=`<div class="hint" style="margin-top:20px"><b>Repariert</b> von ${esc(acc?user(acc.tech).name:'')} für ${euro(l.finalPrice||lastPrice(acc).price)}. ${stars(l.review.stars)}<br>${esc(l.review.text)}</div>`;
+  }
+  if(isOwner){
+    main+=`<h2 class="sec">Angebote (${offers.length})</h2>`;
+    if(l.status==='vergeben') main+=rateBox(l,offers.find(o=>o.status==='angenommen'));
+    main+=offers.length?offers.map(o=>offerHtml(o,l)).join(''):'<div class="empty">Noch keine Angebote. Sobald ein Techniker sich meldet, siehst du es hier.</div>';
+  } else if(m.tech){
+    const mine=offers.find(o=>o.tech===db.me);
+    main+='<h2 class="sec">Dein Angebot</h2>';
+    if(mine) main+=offerHtml(mine,l);
+    else if(l.status==='offen') main+=offerForm(l);
+    else main+='<div class="empty">Für dieses Inserat wurde schon ein Techniker gefunden.</div>';
+    const others=offers.filter(o=>o.tech!==db.me&&o.status!=='abgelehnt').length;
+    if(others) main+=`<p class="muted">${others} ${others===1?'anderer Techniker hat':'andere Techniker haben'} auch ein Angebot gemacht.</p>`;
+  } else {
+    main+=`<h2 class="sec">Kannst du das reparieren?</h2><div class="hint">Du bist gerade als <b>${esc(m.name)}</b> ohne Techniker-Profil angemeldet. Um ein Angebot zu machen, <a href="#profil">schalte in deinem Profil „Ich repariere Sachen“ ein</a> oder wechsle oben zu einem Techniker.</div>`;
+  }
+  return `<a class="back" href="#start">← Alle Inserate</a>
+  <div class="detail">
+    <div style="min-width:0">
+      ${thumb(l,{big:true})}
+      <h1>${esc(l.title)}</h1>
+      <div class="zettel">
+        <div><small>Kategorie</small><span>${esc(cat(l.cat).name)}</span></div>
+        <div><small>Ort</small><span>${esc(l.ort)}</span></div>
+        <div><small>Eingestellt</small><span>${ago(l.created)}</span></div>
+        <div><small>Status</small><span>${l.status==='offen'?'Sucht Techniker':l.status==='vergeben'?'Reparatur vereinbart':'Repariert'}</span></div>
+      </div>
+      <h2 class="sec" style="margin-top:8px">Was ist kaputt?</h2>
+      <p class="desc">${esc(l.desc)}</p>
+      ${main}
+    </div>
+    <aside class="side">${side}</aside>
+  </div>`;
+}
+
+function offerForm(l){
+  return `<form class="panel form" data-form="offer" data-id="${l.id}" style="max-width:none">
+    <div class="row2">
+      <div class="field"><label for="ofPrice">Dein Preis in € <span class="req">*</span></label><input id="ofPrice" type="number" min="1" step="1" required value="${l.budget}"></div>
+      <div class="field"><label for="ofDauer">Wie lange brauchst du?</label><select id="ofDauer">${DAUER.map(d=>`<option>${d}</option>`).join('')}</select></div>
+    </div>
+    <div class="field"><label for="ofText">Nachricht <span class="req">*</span> <span class="sub">Was würdest du machen? Sind Ersatzteile dabei?</span></label><textarea id="ofText" required placeholder="Hi, ich kann das reparieren. Ich würde …" style="min-height:90px"></textarea></div>
+    <div><button class="btn primary" type="submit">Angebot senden <span class="arr" aria-hidden="true">→</span></button></div>
+  </form>`;
+}
+
+function offerHtml(o,l){
+  const t=user(o.tech), lp=lastPrice(o), turn=turnOf(o), isOwner=l.owner===db.me, other=isOwner?t:user(l.owner);
+  let state;
+  if(o.status==='angenommen') state='<span class="state ok">Abgemacht für '+euro(lp.price)+'</span>';
+  else if(o.status==='abgelehnt') state='<span class="state no">Abgelehnt</span>';
+  else if(turn===db.me) state='<span class="state turn">Du bist dran</span>';
+  else state='<span class="state wait">Wartet auf '+esc(user(turn).name.split(' ')[0])+'</span>';
+  const prices=o.msgs.filter(m=>m.kind==='preis');
+  const ladder=prices.length>1?'<div class="ladder" aria-label="Preisverlauf">'+prices.map((m,i)=>'<span class="'+(m.by===l.owner?'o':'')+(i===prices.length-1?' now':'')+'" title="'+esc(user(m.by).name)+'">'+euro(m.price)+'</span>').join('<span aria-hidden="true" style="border:0;padding:0">→</span>')+'</div>':'';
+  const chat=o.msgs.map(m=>{
+    if(m.kind==='annahme') return `<div class="msg sys">${esc(user(m.by).name)} hat ${euro(lp.price)} angenommen · ${ago(m.t)}</div>`;
+    if(m.kind==='ablehnung') return `<div class="msg sys">${esc(user(m.by).name)} hat abgelehnt${m.text?': '+esc(m.text):''} · ${ago(m.t)}</div>`;
+    const mine=m.by===db.me;
+    return `<div class="msg${mine?' me':''}"><span class="who-t">${mine?'Du':esc(user(m.by).name)} · ${ago(m.t)}</span>${m.kind==='preis'?`<div class="p">${o.msgs.indexOf(m)===0?'Angebot':'Vorschlag'}: ${euro(m.price)}</div>`:''}${m.text?esc(m.text):''}</div>`;
+  }).join('');
+  let ctrl='';
+  if(o.status==='offen'){
+    if(turn===db.me){
+      ctrl+=`<div class="actions"><button class="btn ok" type="button" data-act="accept" data-id="${o.id}">${euro(lp.price)} annehmen</button><button class="btn danger small" type="button" data-act="decline" data-id="${o.id}">Ablehnen</button></div>
+      <form class="inline-form" data-form="counter" data-id="${o.id}"><input class="euro" id="cp-${o.id}" type="number" min="1" step="1" required placeholder="Preis €" aria-label="Gegenangebot in Euro"><input class="txt" id="ct-${o.id}" type="text" placeholder="Kurze Nachricht (optional)" aria-label="Nachricht zum Gegenangebot"><button class="btn small" type="submit">Gegenangebot</button></form>`;
+    } else {
+      ctrl+=`<form class="inline-form" data-form="msg" data-id="${o.id}"><input class="txt" id="mt-${o.id}" type="text" required placeholder="Nachricht an ${esc(other.name.split(' ')[0])}" aria-label="Nachricht"><button class="btn small" type="submit">Senden</button></form>`;
+    }
+  }
+  return `<div class="offer${turn===db.me?' turnme':''}">
+    <div class="offer-head">
+      <div class="person"><div class="avatar">${initials(t.name)}</div><div><b>${esc(t.name)}${o.tech===db.me?' (du)':''}</b><span>${stars(avg(t.ratings),t.ratings.length)} · ${esc(short(t.ort))} · ${esc(o.dauer)}</span></div></div>
+      <div style="display:grid;gap:6px;justify-items:end"><span class="tag">${euro(lp.price)}</span>${state}</div>
+    </div>
+    ${ladder}
+    <div class="chat">${chat}</div>
+    ${ctrl}
+  </div>`;
+}
+
+function rateBox(l,o){
+  if(!o) return '';
+  const s=ui.rate[l.id]||0;
+  return `<form class="panel form" data-form="rate" data-id="${l.id}" style="max-width:none;margin-bottom:12px">
+    <div><b>Reparatur mit ${esc(user(o.tech).name)} für ${euro(lastPrice(o).price)} vereinbart.</b> <span class="muted">Wenn alles erledigt ist, bestätige es hier und bewerte die Reparatur.</span></div>
+    <div class="actions" role="group" aria-label="Sterne">${[1,2,3,4,5].map(i=>`<button type="button" class="btn small ${i<=s?'primary':'ghost'}" data-act="star" data-id="${l.id}" data-n="${i}" aria-label="${i} Sterne">★ ${i}</button>`).join('')}</div>
+    <div class="field"><label for="rv">Bewertung</label><input id="rv" type="text" placeholder="Wie lief die Reparatur?"></div>
+    <div><button class="btn primary" type="submit"${s?'':' disabled'}>Als repariert markieren</button></div>
+  </form>`;
+}
+
+function viewNeu(){
+  const m=me();
+  return `<div class="pagehead"><h1>Kaputtes einstellen</h1><p>Beschreib, was kaputt ist. Je genauer, desto besser können Techniker den Preis einschätzen. Felder mit <span class="req">*</span> musst du ausfüllen.</p></div>
+  <form class="form" data-form="new">
+    <div class="field"><label for="nTitle">Gerät und Fehler <span class="req">*</span> <span class="sub">Schreib es so: Gerät: was ist kaputt</span></label><input id="nTitle" type="text" required maxlength="70" value="${esc(ui.prefill)}" placeholder="z. B. Samsung Galaxy S21: Akku hält nicht mehr"></div>
+    <div class="row2">
+      <div class="field"><label for="nCat">Kategorie <span class="req">*</span></label><select id="nCat">${CATS.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}</select></div>
+      <div class="field"><label for="nOrt">Ort <span class="req">*</span></label><input id="nOrt" type="text" required value="${esc(m.ort)}" placeholder="PLZ und Ort"></div>
+    </div>
+    <div class="field"><label for="nDesc">Was ist kaputt? <span class="req">*</span> <span class="sub">Was passiert genau, seit wann, was hast du schon probiert?</span></label><textarea id="nDesc" required></textarea></div>
+    <div class="row2">
+      <div class="field"><label for="nBudget">Preisvorstellung in € <span class="req">*</span></label><input id="nBudget" type="number" min="1" step="1" required placeholder="30"></div>
+      <div class="field" style="align-content:end"><label class="check" for="nVb"><input id="nVb" type="checkbox" checked> Verhandlungsbasis (VB)</label></div>
+    </div>
+    <div class="field"><span class="lbl">Foto</span>
+      <label class="drop" for="nImg">${ui.newImg?`<img src="${ui.newImg}" alt="Vorschau">`:'Foto auswählen (optional, hilft aber sehr)'}</label>
+      <input id="nImg" type="file" accept="image/*" hidden>
+    </div>
+    <div class="actions"><button class="btn primary" type="submit">Inserat veröffentlichen <span class="arr" aria-hidden="true">→</span></button><a class="btn ghost" href="#start">Abbrechen</a></div>
+  </form>`;
+}
+
+function viewMeins(){
+  const m=me();
+  const mine=db.listings.filter(l=>l.owner===db.me).sort((a,b)=>b.created-a.created);
+  const myOffers=db.offers.filter(o=>o.tech===db.me);
+  if(!m.tech) ui.tab='inserate';
+  const tabs=`<div class="tabs"><button class="chip" type="button" data-act="tab" data-id="inserate" aria-pressed="${ui.tab==='inserate'}">Meine Inserate (${mine.length})</button>${m.tech?`<button class="chip" type="button" data-act="tab" data-id="angebote" aria-pressed="${ui.tab==='angebote'}">Meine Angebote (${myOffers.length})</button>`:''}</div>`;
+  let body;
+  if(ui.tab==='angebote'){
+    body=myOffers.length?'<div class="rows">'+myOffers.map(o=>{const l=listing(o.listing); const t=turnOf(o); return `<a class="rowitem" href="#inserat-${l.id}">${thumb(l)}<div style="min-width:0"><b>${esc(l.title)}</b><small>Für ${esc(user(l.owner).name)} · aktuell ${euro(lastPrice(o).price)}</small></div>${stateChip(o,t)}</a>`}).join('')+'</div>'
+      :'<div class="empty">Du hast noch kein Angebot gemacht. <a href="#start">Schau dir die Inserate an</a>.</div>';
+  } else {
+    body=mine.length?'<div class="rows">'+mine.map(l=>{const os=offersOf(l.id); const turns=os.filter(o=>turnOf(o)===db.me).length; return `<a class="rowitem" href="#inserat-${l.id}">${thumb(l)}<div style="min-width:0"><b>${esc(l.title)}</b><small>${os.length} ${os.length===1?'Angebot':'Angebote'} · ${ago(l.created)}</small></div>${turns?`<span class="state turn">${turns}× du bist dran</span>`:l.status==='offen'?'<span class="state wait">Offen</span>':l.status==='vergeben'?'<span class="state ok">Vereinbart</span>':'<span class="state ok">Repariert</span>'}</a>`}).join('')+'</div>'
+      :'<div class="empty">Du hast noch nichts eingestellt. <a href="#neu">Erstes Inserat aufgeben</a></div>';
+  }
+  return `<div class="pagehead"><h1>Meine Sachen</h1><p>Hier siehst du, wo jemand auf deine Antwort wartet.</p></div>${tabs}${body}`;
+}
+function stateChip(o,t){ if(o.status==='angenommen')return'<span class="state ok">Abgemacht</span>'; if(o.status==='abgelehnt')return'<span class="state no">Abgelehnt</span>'; return t===db.me?'<span class="state turn">Du bist dran</span>':'<span class="state wait">Wartet</span>'; }
+
+function viewTechniker(){
+  const techs=db.users.filter(u=>u.tech).sort((a,b)=>avg(b.ratings)-avg(a.ratings));
+  return `<div class="pagehead"><h1>Techniker in deiner Nähe</h1><p>Hobby-Techniker aus Schorndorf und Umgebung, die anderen beim Reparieren helfen.</p></div>
+  <div class="techs">${techs.map(t=>{const done=db.offers.filter(o=>o.tech===t.id&&o.status==='angenommen').length; return `<div class="panel" style="display:grid;gap:12px">
+    <div class="person"><div class="avatar">${initials(t.name)}</div><div><b>${esc(t.name)}${t.id===db.me?' (du)':''}</b><span>${esc(t.ort)}</span></div></div>
+    <div>${stars(avg(t.ratings),t.ratings.length)}</div>
+    <div class="skills">${t.skills.split(',').map(s=>s.trim()).filter(Boolean).map(s=>`<span>${esc(s)}</span>`).join('')}</div>
+    <small class="muted">${done} ${done===1?'Auftrag':'Aufträge'} über KaputtNix</small></div>`}).join('')}</div>
+  <div class="hint" style="margin-top:20px">Du kannst selbst etwas reparieren? <a href="#profil">Schalte in deinem Profil „Ich repariere Sachen“ ein.</a></div>`;
+}
+
+function viewProfil(){
+  const isNew=ui.newProfile; const m=isNew?{name:'',ort:'',tech:false,skills:''}:me();
+  return `<div class="pagehead"><h1>${isNew?'Neues Profil anlegen':'Mein Profil'}</h1><p>${isNew?'Leg ein weiteres Beispiel-Profil an, zum Beispiel für die Präsentation.':'So sehen dich andere auf KaputtNix.'}</p></div>
+  <form class="form" data-form="profil">
+    <div class="field"><label for="pName">Name <span class="req">*</span></label><input id="pName" type="text" required value="${esc(m.name)}"></div>
+    <div class="field"><label for="pOrt">PLZ und Ort <span class="req">*</span></label><input id="pOrt" type="text" required value="${esc(m.ort)}"></div>
+    <label class="check" for="pTech"><input id="pTech" type="checkbox"${m.tech?' checked':''}> Ich repariere Sachen (Techniker-Profil)</label>
+    <div class="field"><label for="pSkills">Was kannst du reparieren? <span class="sub">Mit Komma trennen</span></label><input id="pSkills" type="text" value="${esc(m.skills)}" placeholder="z. B. Handys, Fahrräder, Löten"></div>
+    <div class="actions"><button class="btn primary" type="submit">${isNew?'Profil anlegen':'Speichern'}</button><a class="btn ghost" href="#start">Abbrechen</a></div>
+  </form>`;
+}
+
+function render(){
+  const r=route();
+  renderChrome(r);
+  if(r.v!=='profil') ui.newProfile=false;
+  const app=$('#app');
+  app.innerHTML= r.v==='detail'?viewDetail(r.id): r.v==='neu'?viewNeu(): r.v==='meins'?viewMeins(): r.v==='techniker'?viewTechniker(): r.v==='profil'?viewProfil(): viewStart();
+  ui.fresh=null;
+  document.title=(r.v==='detail'&&listing(r.id)?listing(r.id).title+' · ':'')+'KaputtNix';
+  document.querySelectorAll('.chat').forEach(c=>c.scrollTop=c.scrollHeight);
+}
+let lastRoute=location.hash;
+window.addEventListener('hashchange',()=>{ if(location.hash!==lastRoute){ lastRoute=location.hash; ui.confirmDel=null; render(); window.scrollTo(0,0);} });
+
+/* Aktionen */
+function addMsg(o,kind,text,price){o.msgs.push({by:db.me,kind,t:Date.now(),text:text||'',price});}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]'); if(!b) return;
+  const id=b.dataset.id, act=b.dataset.act;
+  if(act==='cat'){ui.cat=id; render(); return;}
+  if(act==='tab'){ui.tab=id; render(); return;}
+  if(act==='reset'){ if(ui.confirmReset){db=seed(); memOnly=false; save(); ui.confirmReset=false; b.textContent='Beispieldaten zurücksetzen'; go('start'); toast('Beispieldaten wiederhergestellt'); } else { ui.confirmReset=true; b.textContent='Wirklich zurücksetzen? Nochmal klicken'; setTimeout(()=>{ui.confirmReset=false; b.textContent='Beispieldaten zurücksetzen';},4000);} return;}
+  if(act==='del'){ui.confirmDel=id; render(); return;}
+  if(act==='del-no'){ui.confirmDel=null; render(); return;}
+  if(act==='del-yes'){db.listings=db.listings.filter(l=>l.id!==id); db.offers=db.offers.filter(o=>o.listing!==id); save(); ui.confirmDel=null; go('meins'); toast('Inserat gelöscht'); return;}
+  if(act==='star'){ui.rate[id]=+b.dataset.n; const v=$('#rv')?$('#rv').value:''; render(); if($('#rv')) $('#rv').value=v; return;}
+  const o=db.offers.find(x=>x.id===id); if(!o) return;
+  const l=listing(o.listing);
+  if(act==='accept' && turnOf(o)===db.me){
+    addMsg(o,'annahme'); o.status='angenommen'; l.status='vergeben'; l.finalPrice=lastPrice(o).price;
+    db.offers.filter(x=>x.listing===l.id&&x.id!==o.id&&x.status==='offen').forEach(x=>{x.status='abgelehnt'; x.msgs.push({by:l.owner,kind:'ablehnung',t:Date.now(),text:'Ein anderes Angebot wurde angenommen.'});});
+    save(); render(); toast('Abgemacht! '+euro(l.finalPrice)+' mit '+user(o.tech).name.split(' ')[0]);
+  }
+  if(act==='decline' && turnOf(o)===db.me){ addMsg(o,'ablehnung'); o.status='abgelehnt'; save(); render(); toast('Angebot abgelehnt'); }
+});
+document.addEventListener('change',e=>{
+  if(e.target.id==='sort'){ui.sort=e.target.value; render();}
+  if(e.target.id==='userSel'){
+    if(e.target.value==='__new'){ ui.newProfile=true; go('profil'); renderChrome(route()); return; }
+    db.me=e.target.value; save(); ui.tab='inserate'; render(); toast('Du bist jetzt '+me().name);
+  }
+  if(e.target.id==='nImg'){
+    const f=e.target.files&&e.target.files[0]; if(!f) return;
+    const keep=readNew();
+    const rd=new FileReader();
+    rd.onload=()=>{ const img=new Image(); img.onload=()=>{ const s=Math.min(1,900/Math.max(img.width,img.height)); const c=document.createElement('canvas'); c.width=Math.round(img.width*s); c.height=Math.round(img.height*s); c.getContext('2d').drawImage(img,0,0,c.width,c.height); ui.newImg=c.toDataURL('image/jpeg',.78); render(); writeNew(keep); }; img.onerror=()=>toast('Dieses Bild kann nicht gelesen werden. Versuch ein JPG oder PNG.'); img.src=rd.result; };
+    rd.readAsDataURL(f);
+  }
+});
+const NEWF=['nTitle','nCat','nOrt','nDesc','nBudget'];
+function readNew(){const o={}; NEWF.forEach(k=>{const el=$('#'+k); if(el) o[k]=el.value;}); o.nVb=$('#nVb')&&$('#nVb').checked; return o;}
+function writeNew(o){NEWF.forEach(k=>{const el=$('#'+k); if(el&&o[k]!=null) el.value=o[k];}); if($('#nVb')) $('#nVb').checked=o.nVb;}
+
+document.addEventListener('submit',e=>{
+  const f=e.target.closest('[data-form]'); if(!f) return; e.preventDefault();
+  const kind=f.dataset.form, id=f.dataset.id;
+  if(kind==='search'){ui.q=$('#q').value.trim(); render(); return;}
+  if(kind==='quick'){ui.prefill=$('#quickIn').value.trim(); go('neu'); setTimeout(()=>{const el=$(ui.prefill?'#nDesc':'#nTitle'); if(el) el.focus();},50); return;}
+  if(kind==='new'){
+    const l={id:nid('l'),owner:db.me,title:$('#nTitle').value.trim(),cat:$('#nCat').value,desc:$('#nDesc').value.trim(),budget:Math.max(1,+$('#nBudget').value||1),vb:$('#nVb').checked,ort:$('#nOrt').value.trim(),created:Date.now(),status:'offen',img:ui.newImg};
+    db.listings.push(l); ui.newImg=null; ui.prefill=''; save(); go('inserat-'+l.id); toast('Dein Inserat ist online'); return;
+  }
+  if(kind==='offer'){
+    const o={id:nid('o'),listing:id,tech:db.me,dauer:$('#ofDauer').value,status:'offen',msgs:[]};
+    addMsg(o,'preis',$('#ofText').value.trim(),Math.max(1,+$('#ofPrice').value||1));
+    db.offers.push(o); save(); render(); toast('Angebot gesendet'); return;
+  }
+  const o=db.offers.find(x=>x.id===id);
+  if(kind==='counter' && o && turnOf(o)===db.me){
+    const p=Math.max(1,+$('#cp-'+id).value||0); addMsg(o,'preis',$('#ct-'+id).value.trim(),p); save(); render(); toast('Gegenangebot über '+euro(p)+' gesendet'); return;
+  }
+  if(kind==='msg' && o){ addMsg(o,'text',$('#mt-'+id).value.trim()); save(); render(); return; }
+  if(kind==='rate'){
+    const l=listing(id), s=ui.rate[id]; if(!s) return;
+    const acc=db.offers.find(x=>x.listing===id&&x.status==='angenommen');
+    l.status='repariert'; l.review={stars:s,text:$('#rv').value.trim()||'Hat alles gut geklappt.'};
+    if(acc) user(acc.tech).ratings.push(s);
+    ui.fresh=id; save(); render(); window.scrollTo({top:0,behavior:'smooth'}); toast('Super, als repariert markiert!'); return;
+  }
+  if(kind==='profil'){
+    const data={name:$('#pName').value.trim(),ort:$('#pOrt').value.trim(),tech:$('#pTech').checked,skills:$('#pSkills').value.trim()};
+    if(ui.newProfile){ const u=Object.assign({id:nid('u'),ratings:[]},data); db.users.push(u); db.me=u.id; ui.newProfile=false; toast('Profil angelegt. Du bist jetzt '+u.name); }
+    else { Object.assign(me(),data); toast('Profil gespeichert'); }
+    save(); go('start'); return;
+  }
+});
+
+render();
+})();
+</script>
+</body></html>
